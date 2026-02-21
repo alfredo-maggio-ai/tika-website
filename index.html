@@ -281,6 +281,39 @@
 </head>
 <body>
 
+<!-- PASSWORD GATE -->
+<style>
+#gate{position:fixed;inset:0;z-index:9999;background:#050a14;display:flex;align-items:center;justify-content:center;font-family:'Inter',-apple-system,sans-serif;}
+#gate.hidden{display:none;}
+.gate-box{text-align:center;max-width:340px;width:100%;padding:0 24px;}
+.gate-logo{width:72px;height:72px;border-radius:16px;margin:0 auto 28px;display:block;}
+.gate-title{font-size:18px;font-weight:600;color:#fff;margin-bottom:8px;letter-spacing:-0.3px;}
+.gate-sub{font-size:14px;color:rgba(255,255,255,0.4);margin-bottom:28px;}
+.gate-form{display:flex;flex-direction:column;gap:12px;}
+.gate-input{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:#fff;font-family:inherit;font-size:15px;padding:13px 16px;border-radius:9px;outline:none;text-align:center;width:100%;transition:border-color 0.2s;}
+.gate-input:focus{border-color:rgba(59,130,246,0.5);}
+.gate-input::placeholder{color:rgba(255,255,255,0.25);}
+.gate-btn{background:#2563eb;color:#fff;border:none;padding:13px;border-radius:9px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;width:100%;transition:opacity 0.15s;}
+.gate-btn:hover{opacity:0.88;}
+.gate-error{font-size:13px;color:#f87171;min-height:18px;}
+</style>
+<div id="gate">
+  <div class="gate-box">
+    <img class="gate-logo" src="assets/tika-logo.png" alt="Tika" />
+    <div class="gate-title">Tika Security</div>
+    <div class="gate-sub">This site is private.</div>
+    <form class="gate-form" onsubmit="checkPass(event)">
+      <input id="gate-input" class="gate-input" type="password" placeholder="Password" autofocus />
+      <button type="submit" class="gate-btn">Enter</button>
+      <div class="gate-error" id="gate-error"></div>
+    </form>
+  </div>
+</div>
+<script>
+(function(){if(localStorage.getItem('tika_auth')==='ok_2026'){document.getElementById('gate').classList.add('hidden');}})();
+function checkPass(e){e.preventDefault();var v=document.getElementById('gate-input').value;if(v==='LetMeIn20261'){localStorage.setItem('tika_auth','ok_2026');document.getElementById('gate').classList.add('hidden');}else{var err=document.getElementById('gate-error');err.textContent='Incorrect password.';document.getElementById('gate-input').value='';setTimeout(function(){err.textContent='';},2500);}}
+</script>
+
 <!-- NAV -->
 <nav>
   <div class="nav-left">
