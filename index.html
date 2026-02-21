@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tika Security</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080c12;
+      --bg2: #0d1420;
+      --surface: #111926;
+      --border: #1e2d40;
+      --accent: #3b82f6;
+      --accent2: #60a5fa;
+      --text: #e8edf4;
+      --muted: #6b7a8d;
+      --subtle: #8fa3b8;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 20px 48px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      background: rgba(8,12,18,0.85);
+      backdrop-filter: blur(12px);
+    }
+    .logo img {
+      height: 44px; width: auto; display: block;
+      border-radius: 10px;
+    }
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    nav a {
+      color: var(--subtle); font-size: 14px; text-decoration: none;
+      transition: color 0.2s;
+    }
+    nav a:hover { color: var(--text); }
+    .nav-cta {
+      background: var(--accent); color: #fff !important;
+      padding: 8px 20px; border-radius: 6px; font-size: 14px;
+      font-weight: 500; transition: background 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--accent2) !important; }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 120px 48px 80px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 600px;
+      background: radial-gradient(ellipse at center, rgba(59,130,246,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-inner {
+      max-width: 720px; text-align: center; position: relative;
+    }
+    .hero-logo {
+      margin-bottom: 36px;
+    }
+    .hero-logo img {
+      height: 110px; width: auto;
+      border-radius: 22px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 8px 40px rgba(59,130,246,0.15);
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2);
+      color: var(--accent2); font-size: 12px; font-weight: 500; letter-spacing: 0.5px;
+      padding: 6px 14px; border-radius: 100px; margin-bottom: 40px;
+      text-transform: uppercase;
+    }
+    .badge::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); display: block;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
+    }
+    h1 {
+      font-size: clamp(38px, 5.5vw, 60px);
+      font-weight: 700; line-height: 1.08;
+      letter-spacing: -2px; margin-bottom: 28px;
+    }
+    h1 em { font-style: normal; color: var(--accent2); }
+    .hero-sub {
+      font-size: 19px; color: var(--subtle); max-width: 520px;
+      margin: 0 auto 48px; line-height: 1.6;
+    }
+    .cta-group { display: flex; gap: 12px; justify-content: center; align-items: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--accent); color: #fff;
+      padding: 14px 28px; border-radius: 8px; font-size: 15px;
+      font-weight: 600; text-decoration: none; transition: all 0.2s;
+      border: none; cursor: pointer;
+    }
+    .btn-primary:hover { background: var(--accent2); transform: translateY(-1px); }
+    .btn-ghost {
+      background: transparent; color: var(--subtle);
+      padding: 14px 28px; border-radius: 8px; font-size: 15px;
+      font-weight: 500; text-decoration: none; transition: color 0.2s;
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+
+    /* SHARED SECTION */
+    section { padding: 96px 48px; }
+    .container { max-width: 880px; margin: 0 auto; }
+    .section-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      color: var(--accent); text-transform: uppercase; margin-bottom: 16px;
+    }
+    h2 {
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 700; letter-spacing: -1px; line-height: 1.1;
+      margin-bottom: 20px;
+    }
+    .section-sub {
+      font-size: 17px; color: var(--subtle); max-width: 560px;
+      line-height: 1.65; margin-bottom: 56px;
+    }
+
+    /* PROBLEM */
+    .problem-section { background: var(--bg); border-top: 1px solid var(--border); }
+    .problem-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .problem-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px; padding: 28px;
+      transition: border-color 0.2s;
+    }
+    .problem-card:hover { border-color: rgba(59,130,246,0.25); }
+    .problem-card h3 {
+      font-size: 15px; font-weight: 600; margin-bottom: 10px; color: var(--text);
+    }
+    .problem-card p { font-size: 14px; color: var(--subtle); line-height: 1.65; }
+
+    /* DIVIDER QUOTE */
+    .divider {
+      padding: 64px 48px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+    }
+    .divider-inner {
+      max-width: 880px; margin: 0 auto;
+      display: flex; align-items: center; gap: 24px;
+    }
+    .divider-line { flex: 1; height: 1px; background: var(--border); }
+    .divider-quote {
+      font-size: clamp(18px, 2.5vw, 24px);
+      font-weight: 600; letter-spacing: -0.3px;
+      text-align: center; max-width: 640px;
+      color: var(--text); line-height: 1.4;
+    }
+    .divider-quote span { color: var(--accent2); }
+
+    /* APPROACH */
+    .approach-section { background: var(--bg); border-top: 1px solid var(--border); }
+    .approach-list {
+      display: flex; flex-direction: column; gap: 0;
+      border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+    }
+    .approach-row {
+      display: flex; gap: 32px; align-items: flex-start;
+      padding: 32px 36px;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+    .approach-row:last-child { border-bottom: none; }
+    .approach-row:hover { background: var(--surface); }
+    .approach-num {
+      font-size: 11px; font-weight: 700; letter-spacing: 1px;
+      color: var(--accent); text-transform: uppercase;
+      padding-top: 3px; min-width: 24px; flex-shrink: 0;
+    }
+    .approach-text h3 {
+      font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--text);
+    }
+    .approach-text p { font-size: 14px; color: var(--subtle); line-height: 1.65; }
+
+    /* ABOUT */
+    .about-section { background: var(--bg2); border-top: 1px solid var(--border); }
+    .about-body {
+      font-size: 17px; color: var(--subtle); max-width: 620px;
+      line-height: 1.75;
+    }
+    .about-body p + p { margin-top: 20px; }
+
+    /* JOIN */
+    .join-section {
+      background: var(--bg); border-top: 1px solid var(--border);
+    }
+    .join-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start;
+    }
+    .join-left h2 { margin-bottom: 16px; }
+    .join-left p { font-size: 16px; color: var(--subtle); line-height: 1.7; }
+    .join-right { padding-top: 8px; }
+    .signup-form {
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .signup-form input {
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text); font-size: 15px;
+      padding: 14px 18px; border-radius: 8px; outline: none;
+      transition: border-color 0.2s;
+    }
+    .signup-form input:focus { border-color: var(--accent); }
+    .signup-form input::placeholder { color: var(--muted); }
+    .signup-note { margin-top: 10px; font-size: 12px; color: var(--muted); }
+
+    .role-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 24px 28px;
+      margin-bottom: 12px;
+      transition: border-color 0.2s;
+    }
+    .role-card:hover { border-color: rgba(59,130,246,0.3); }
+    .role-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .role-card p { font-size: 13px; color: var(--subtle); line-height: 1.6; }
+    .role-card a {
+      display: inline-block; margin-top: 12px;
+      color: var(--accent2); font-size: 13px; font-weight: 500; text-decoration: none;
+    }
+    .role-card a:hover { text-decoration: underline; }
+
+    /* FOOTER */
+    footer {
+      padding: 36px 48px;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px;
+    }
+    .footer-logo img { height: 36px; width: auto; border-radius: 8px; opacity: 0.8; }
+    footer p { font-size: 13px; color: var(--muted); }
+
+    @media (max-width: 768px) {
+      nav { padding: 16px 24px; }
+      .nav-links { display: none; }
+      section, .divider, footer { padding-left: 24px; padding-right: 24px; }
+      .join-grid { grid-template-columns: 1fr; gap: 40px; }
+      .approach-row { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo"><img src="assets/tika-logo.png" alt="Tika" /></div>
+  <div class="nav-links">
+    <a href="#problem">The Problem</a>
+    <a href="#approach">Our Approach</a>
+    <a href="#about">About</a>
+    <a href="#join">Join Us</a>
+    <a href="mailto:info@tika.io" class="nav-cta">Get Early Access</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-logo"><img src="assets/tika-logo.png" alt="Tika" /></div>
+    <div class="badge">Stealth &middot; Enterprise Data Security</div>
+    <h1>Your data moves.<br><em>Your control</em> should too.</h1>
+    <p class="hero-sub">
+      The moment sensitive data crosses a boundary — to a partner, a contractor, a device, an AI system —
+      enterprises lose control. Tika changes that.
+    </p>
+    <div class="cta-group">
+      <a href="mailto:info@tika.io" class="btn-primary">Get Early Access</a>
+      <a href="#problem" class="btn-ghost">Learn more</a>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="problem-section" id="problem">
+  <div class="container">
+    <div class="section-label">The Problem</div>
+    <h2>Security built for a world<br>that no longer exists.</h2>
+    <p class="section-sub">
+      Perimeters are gone. Data moves constantly — across employees, contractors, partners,
+      and AI systems. Existing tools were not built for any of it.
+    </p>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <h3>Control breaks at the boundary</h3>
+        <p>Once a file leaves your network — to a partner, a personal device, or a collaborator's cloud — enforcement becomes theoretical. Revocation rarely works. Visibility disappears.</p>
+      </div>
+      <div class="problem-card">
+        <h3>AI is moving data faster than governance can keep up</h3>
+        <p>Blanket blocking drives shadow AI. Doing nothing bleeds data. 57% of employees already input sensitive information into public AI tools — with personal accounts, outside any policy.</p>
+      </div>
+      <div class="problem-card">
+        <h3>Security vs. business velocity — a losing tradeoff</h3>
+        <p>The tighter the controls, the slower the work. Teams route around security to get things done. The result: a deteriorating relationship between security and the business it's supposed to protect.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIVIDER QUOTE -->
+<div class="divider">
+  <div class="divider-inner">
+    <div class="divider-line"></div>
+    <div class="divider-quote">
+      "Traditional DLP <span>watches the door.</span><br>
+      We make the data <span>useless if it walks out.</span>"
+    </div>
+    <div class="divider-line"></div>
+  </div>
+</div>
+
+<!-- APPROACH -->
+<section class="approach-section" id="approach">
+  <div class="container">
+    <div class="section-label">Our Approach</div>
+    <h2>Protection that travels<br>with the data.</h2>
+    <p class="section-sub">
+      Tika is the data control layer that lets enterprise data move freely —
+      across people, devices, and AI — without sacrificing security or governance.
+    </p>
+    <div class="approach-list">
+      <div class="approach-row">
+        <div class="approach-num">01</div>
+        <div class="approach-text">
+          <h3>Control follows the data, not the perimeter</h3>
+          <p>Protection stays enforceable even when a file leaves your network, your approved apps, or your organization entirely. The boundary is no longer the last line of defense.</p>
+        </div>
+      </div>
+      <div class="approach-row">
+        <div class="approach-num">02</div>
+        <div class="approach-text">
+          <h3>Centralized policy, decentralized enforcement</h3>
+          <p>Define rules once. Enforce them everywhere — in the flow of work, without asking people to change how they operate.</p>
+        </div>
+      </div>
+      <div class="approach-row">
+        <div class="approach-num">03</div>
+        <div class="approach-text">
+          <h3>AI governed like humans — not blocked or ignored</h3>
+          <p>AI agents are treated as first-class actors under the same access control model as people. Granular, auditable, and policy-governed — not a binary allow/block that breaks workflows.</p>
+        </div>
+      </div>
+      <div class="approach-row">
+        <div class="approach-num">04</div>
+        <div class="approach-text">
+          <h3>Meaningful revocation</h3>
+          <p>Access can be stopped after the fact. Once revoked, the next access is denied — even for data already across a boundary, on a device you don't own.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-section" id="about">
+  <div class="container">
+    <div class="section-label">About</div>
+    <h2>Built by people who've<br>lived the problem.</h2>
+    <div class="about-body">
+      <p>
+        Tika was founded by serial entrepreneurs with deep experience in enterprise infrastructure
+        and cloud security. The question they kept hearing from customers was always the same:
+        how do we maintain control after data leaves our perimeter? The tools available never had a real answer.
+      </p>
+      <p>
+        The problem became urgent. The enabling technology finally caught up.
+        Tika is built at that intersection — by a team that understands both sides of it.
+      </p>
+      <p>
+        We are operating in stealth, advised by industry leaders, and preparing for a limited beta.
+        If you run security for an enterprise that moves sensitive data across boundaries every day —
+        we want to talk.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- JOIN -->
+<section class="join-section" id="join">
+  <div class="container">
+    <div class="join-grid">
+      <div class="join-left">
+        <div class="section-label">Join Us</div>
+        <h2>Build something<br>that matters.</h2>
+        <p>
+          We're a small team working on a hard problem at the intersection of cryptography,
+          operating systems, and AI. Early stage. High ownership. No bureaucracy.
+          If that sounds like your environment — we want to talk.
+        </p>
+      </div>
+      <div class="join-right">
+        <div class="role-card">
+          <h3>Security Infrastructure Engineer</h3>
+          <p>Deep systems work. You understand how operating systems enforce access controls and want to push those boundaries further than anyone has before.</p>
+          <a href="mailto:info@tika.io">Apply → info@tika.io</a>
+        </div>
+        <div class="role-card">
+          <h3>Cryptography Engineer</h3>
+          <p>You think in protocols and proofs. You know the difference between "secure by policy" and "secure by construction" — and you care deeply about the latter.</p>
+          <a href="mailto:info@tika.io">Apply → info@tika.io</a>
+        </div>
+        <div class="role-card">
+          <h3>Don't see your role?</h3>
+          <p>We're building the team around exceptional people, not headcount targets. If the problem resonates, reach out anyway.</p>
+          <a href="mailto:info@tika.io">Get in touch → info@tika.io</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo"><img src="assets/tika-logo.png" alt="Tika" /></div>
+  <p>Building in stealth. &copy; 2025 Tika Security, Inc.</p>
+  <p style="font-size: 13px; color: var(--muted);">info@tika.io</p>
+</footer>
+
+</body>
+</html>
