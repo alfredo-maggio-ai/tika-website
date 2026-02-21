@@ -345,16 +345,98 @@ function checkPass(e){e.preventDefault();var v=document.getElementById('gate-inp
       <div class="problem-tag">The Perimeter Assumption</div>
       <h3>Security depends on confining data within a perimeter.</h3>
       <p>But data doesn't stay put. Partners, contractors, and customers all need access. The business demands collaboration across the very boundaries that security was designed to enforce.</p>
+      <!-- SVG: perimeter with data already outside -->
+      <svg viewBox="0 0 220 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;margin-top:24px;opacity:0.85">
+        <!-- dashed perimeter box -->
+        <rect x="20" y="20" width="110" height="80" rx="6" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="5 3"/>
+        <!-- label -->
+        <text x="75" y="13" text-anchor="middle" font-size="8" fill="#2563eb" font-family="Inter,sans-serif" font-weight="600" letter-spacing="0.5">PERIMETER</text>
+        <!-- doc inside -->
+        <rect x="38" y="40" width="22" height="28" rx="2" stroke="#6b7280" stroke-width="1.2" fill="#f5f7fa"/>
+        <line x1="43" y1="48" x2="55" y2="48" stroke="#9ca3af" stroke-width="1"/>
+        <line x1="43" y1="53" x2="55" y2="53" stroke="#9ca3af" stroke-width="1"/>
+        <line x1="43" y1="58" x2="51" y2="58" stroke="#9ca3af" stroke-width="1"/>
+        <!-- doc inside 2 -->
+        <rect x="74" y="44" width="22" height="28" rx="2" stroke="#6b7280" stroke-width="1.2" fill="#f5f7fa"/>
+        <line x1="79" y1="52" x2="91" y2="52" stroke="#9ca3af" stroke-width="1"/>
+        <line x1="79" y1="57" x2="91" y2="57" stroke="#9ca3af" stroke-width="1"/>
+        <line x1="79" y1="62" x2="87" y2="62" stroke="#9ca3af" stroke-width="1"/>
+        <!-- arrow leaking out -->
+        <path d="M130 60 L155 60" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3 2" marker-end="url(#arr)"/>
+        <defs>
+          <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#ef4444"/>
+          </marker>
+        </defs>
+        <!-- doc outside (escaped) -->
+        <rect x="158" y="44" width="22" height="28" rx="2" stroke="#ef4444" stroke-width="1.2" fill="#fef2f2"/>
+        <line x1="163" y1="52" x2="175" y2="52" stroke="#fca5a5" stroke-width="1"/>
+        <line x1="163" y1="57" x2="175" y2="57" stroke="#fca5a5" stroke-width="1"/>
+        <line x1="163" y1="62" x2="171" y2="62" stroke="#fca5a5" stroke-width="1"/>
+        <!-- arrow 2 leaking out -->
+        <path d="M130 75 L155 80" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3 2" marker-end="url(#arr)"/>
+      </svg>
     </div>
     <div class="problem-col">
       <div class="problem-tag">The Classification Trap</div>
       <h3>Data restriction only works if every label is accurate.</h3>
       <p>Every policy requires accurate labels. Every missed label is a missed threat or a false positive that trains users to ignore alerts. Perfect classification at scale doesn't exist.</p>
+      <!-- SVG: grid of files with correct, wrong, missing labels -->
+      <svg viewBox="0 0 220 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;margin-top:24px;opacity:0.85">
+        <!-- file 1: correct label -->
+        <rect x="16" y="20" width="36" height="44" rx="3" fill="#f5f7fa" stroke="#d1d5db" stroke-width="1.2"/>
+        <polygon points="40,20 52,20 52,32 40,32" fill="#e5e7eb" stroke="#d1d5db" stroke-width="1.2"/>
+        <rect x="21" y="52" width="26" height="7" rx="2" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+        <text x="34" y="58.5" text-anchor="middle" font-size="5.5" fill="#16a34a" font-family="Inter,sans-serif" font-weight="600">✓ CONF</text>
+        <!-- file 2: wrong label -->
+        <rect x="64" y="20" width="36" height="44" rx="3" fill="#f5f7fa" stroke="#d1d5db" stroke-width="1.2"/>
+        <polygon points="88,20 100,20 100,32 88,32" fill="#e5e7eb" stroke="#d1d5db" stroke-width="1.2"/>
+        <rect x="69" y="52" width="26" height="7" rx="2" fill="#fef9c3" stroke="#fde047" stroke-width="1"/>
+        <text x="82" y="58.5" text-anchor="middle" font-size="5.5" fill="#ca8a04" font-family="Inter,sans-serif" font-weight="600">? PUBLIC</text>
+        <!-- file 3: no label (danger) -->
+        <rect x="112" y="20" width="36" height="44" rx="3" fill="#f5f7fa" stroke="#d1d5db" stroke-width="1.2"/>
+        <polygon points="136,20 148,20 148,32 136,32" fill="#e5e7eb" stroke="#d1d5db" stroke-width="1.2"/>
+        <rect x="117" y="52" width="26" height="7" rx="2" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+        <text x="130" y="58.5" text-anchor="middle" font-size="5.5" fill="#dc2626" font-family="Inter,sans-serif" font-weight="600">✕ NONE</text>
+        <!-- file 4: correct -->
+        <rect x="160" y="20" width="36" height="44" rx="3" fill="#f5f7fa" stroke="#d1d5db" stroke-width="1.2"/>
+        <polygon points="184,20 196,20 196,32 184,32" fill="#e5e7eb" stroke="#d1d5db" stroke-width="1.2"/>
+        <rect x="165" y="52" width="26" height="7" rx="2" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+        <text x="178" y="58.5" text-anchor="middle" font-size="5.5" fill="#16a34a" font-family="Inter,sans-serif" font-weight="600">✓ CONF</text>
+        <!-- scale label -->
+        <text x="110" y="84" text-anchor="middle" font-size="7.5" fill="#9ca3af" font-family="Inter,sans-serif">One wrong label. One breach.</text>
+      </svg>
     </div>
     <div class="problem-col">
       <div class="problem-tag">The Trust Problem</div>
       <h3>Security posture depends on users doing the right thing.</h3>
       <p>They won't. They have jobs to do. They'll find workarounds — email, consumer file sharing, ChatGPT. Security that depends on user compliance isn't security.</p>
+      <!-- SVG: shield with arrow routing around it -->
+      <svg viewBox="0 0 220 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;margin-top:24px;opacity:0.85">
+        <!-- user (circle + body) -->
+        <circle cx="30" cy="44" r="10" stroke="#6b7280" stroke-width="1.3" fill="#f5f7fa"/>
+        <path d="M18 70 Q30 58 42 70" stroke="#6b7280" stroke-width="1.3" fill="none"/>
+        <!-- shield (the "right" path) -->
+        <path d="M95 28 L110 28 L110 55 Q110 66 102 72 Q94 66 94 55 Z" stroke="#2563eb" stroke-width="1.5" fill="#eff5ff"/>
+        <text x="102" y="55" text-anchor="middle" font-size="11" fill="#2563eb">🔒</text>
+        <!-- straight arrow — blocked -->
+        <path d="M44 55 L88 55" stroke="#d1d5db" stroke-width="1.3" stroke-dasharray="3 2"/>
+        <line x1="88" y1="50" x2="88" y2="60" stroke="#d1d5db" stroke-width="1.5"/>
+        <!-- workaround arrow (curves around shield) -->
+        <path d="M44 55 Q60 20 82 20 Q118 20 140 45 L155 55" stroke="#ef4444" stroke-width="1.5" fill="none" marker-end="url(#arr2)" stroke-dasharray="4 2"/>
+        <defs>
+          <marker id="arr2" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#ef4444"/>
+          </marker>
+        </defs>
+        <!-- destination (doc) -->
+        <rect x="158" y="42" width="28" height="34" rx="3" fill="#fef2f2" stroke="#fca5a5" stroke-width="1.3"/>
+        <line x1="164" y1="54" x2="180" y2="54" stroke="#fca5a5" stroke-width="1"/>
+        <line x1="164" y1="59" x2="180" y2="59" stroke="#fca5a5" stroke-width="1"/>
+        <line x1="164" y1="64" x2="174" y2="64" stroke="#fca5a5" stroke-width="1"/>
+        <!-- label: workaround -->
+        <text x="110" y="108" text-anchor="middle" font-size="7.5" fill="#9ca3af" font-family="Inter,sans-serif">ChatGPT. Email. Personal drive.</text>
+      </svg>
     </div>
   </div>
 </section>
