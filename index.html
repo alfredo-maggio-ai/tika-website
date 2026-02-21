@@ -3,427 +3,452 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tika Security — Enterprise Data Control</title>
+  <title>Tika — Enterprise Data Security</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --dark: #050a14; --dark2: #0a1323; --dark-border: rgba(255,255,255,0.08);
-      --light: #ffffff; --light2: #f5f7fa; --light-border: #e2e6ed;
-      --blue: #2463eb; --blue-light: #3b82f6; --blue-pale: #eff5ff;
-      --text-dark: #0d1526; --text-mid: #374151; --text-muted: #6b7280;
-      --text-light: #9ca3af; --text-white: #f0f4ff; --text-white-muted: rgba(255,255,255,0.6);
+      --dark: #0a0d14;
+      --dark-mid: #111827;
+      --light: #ffffff;
+      --light2: #f7f8fa;
+      --border: #e5e7eb;
+      --blue: #2563eb;
+      --blue-dim: rgba(37,99,235,0.08);
+      --blue-border: rgba(37,99,235,0.2);
+      --text: #111827;
+      --text-mid: #374151;
+      --text-muted: #6b7280;
+      --text-faint: #9ca3af;
+      --on-dark: rgba(255,255,255,0.85);
+      --on-dark-muted: rgba(255,255,255,0.5);
     }
     html { scroll-behavior: smooth; }
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--light); color: var(--text-dark);
+      color: var(--text); background: var(--light);
       line-height: 1.6; -webkit-font-smoothing: antialiased;
     }
 
-    /* NAV */
+    /* ── NAV ── */
     nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      padding: 0 48px; height: 64px;
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(255,255,255,0.95); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 48px; height: 60px;
       display: flex; align-items: center; justify-content: space-between;
-      background: rgba(5,10,20,0.92); backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--dark-border);
     }
-    .nav-logo img { height: 36px; width: auto; border-radius: 8px; display: block; }
-    .nav-links { display: flex; gap: 36px; align-items: center; }
-    .nav-links a {
-      color: rgba(255,255,255,0.65); font-size: 14px; font-weight: 400;
-      text-decoration: none; letter-spacing: 0.01em; transition: color 0.2s;
+    .nav-left { display: flex; align-items: center; gap: 8px; }
+    .nav-left img { height: 30px; border-radius: 6px; display: block; }
+    .nav-left span { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; color: var(--text); }
+    .nav-right { display: flex; align-items: center; gap: 28px; }
+    .nav-right a {
+      font-size: 14px; color: var(--text-muted); text-decoration: none;
+      transition: color 0.15s;
     }
-    .nav-links a:hover { color: #fff; }
-    .nav-links a.nav-contact { color: rgba(255,255,255,0.5); font-size: 13px; }
+    .nav-right a:hover { color: var(--text); }
+    .nav-right a.nav-btn {
+      background: var(--dark); color: #fff;
+      padding: 7px 16px; border-radius: 7px; font-weight: 500; font-size: 13px;
+      transition: opacity 0.15s;
+    }
+    .nav-right a.nav-btn:hover { opacity: 0.85; }
 
-    /* HERO */
+    /* ── HERO ── */
     .hero {
-      background: var(--dark); min-height: 100vh;
-      display: flex; align-items: center; justify-content: center;
-      padding: 100px 48px 80px; position: relative; overflow: hidden;
+      padding: 88px 48px 80px;
+      max-width: 720px; margin: 0 auto; text-align: center;
     }
-    .hero::before {
-      content: ''; position: absolute; inset: 0;
-      background:
-        radial-gradient(ellipse 900px 600px at 50% 40%, rgba(36,99,235,0.09) 0%, transparent 70%),
-        radial-gradient(ellipse 500px 400px at 20% 80%, rgba(59,130,246,0.05) 0%, transparent 60%);
-      pointer-events: none;
+    .hero-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.6px;
+      text-transform: uppercase; color: var(--blue); margin-bottom: 20px;
     }
-    .hero-inner { max-width: 720px; text-align: center; position: relative; z-index: 1; }
-    .hero-logo { margin-bottom: 40px; }
-    .hero-logo img {
-      height: 96px; width: auto; border-radius: 20px;
-      box-shadow: 0 0 0 1px rgba(255,255,255,0.07), 0 8px 48px rgba(36,99,235,0.2);
-    }
-    .badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(36,99,235,0.12); border: 1px solid rgba(59,130,246,0.25);
-      color: rgba(147,197,253,0.9); font-size: 11px; font-weight: 500;
-      letter-spacing: 1.2px; text-transform: uppercase;
-      padding: 6px 14px; border-radius: 100px; margin-bottom: 36px;
-    }
-    .badge-dot {
-      width: 5px; height: 5px; border-radius: 50%;
-      background: var(--blue-light); animation: pulse 2.5s ease-in-out infinite;
-    }
-    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.25;} }
     .hero h1 {
-      font-size: clamp(40px, 6vw, 68px); font-weight: 700;
-      line-height: 1.06; letter-spacing: -2.5px; color: #fff; margin-bottom: 28px;
+      font-size: clamp(34px, 5.5vw, 56px); font-weight: 700;
+      letter-spacing: -2px; line-height: 1.08; color: var(--text); margin-bottom: 20px;
     }
-    .hero h1 em { font-style: normal; color: var(--blue-light); }
     .hero-sub {
-      font-size: 19px; color: var(--text-white-muted);
-      max-width: 520px; margin: 0 auto; line-height: 1.65;
+      font-size: 18px; color: var(--text-muted); line-height: 1.65;
+      max-width: 520px; margin: 0 auto 36px;
     }
-
-    /* SHARED */
-    .section { padding: 100px 48px; }
-    .container { max-width: 960px; margin: 0 auto; }
-    .label {
-      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
-      text-transform: uppercase; margin-bottom: 16px;
-    }
-    .label-blue { color: var(--blue); }
-    .label-white { color: rgba(147,197,253,0.7); }
-    h2 { font-size: clamp(30px, 4vw, 46px); font-weight: 700; letter-spacing: -1.5px; line-height: 1.1; }
-    .section-sub {
-      font-size: 17px; color: var(--text-muted); max-width: 560px;
-      line-height: 1.7; margin-top: 16px;
-    }
-
-    /* PROBLEM */
-    .problem { background: var(--light); border-top: 1px solid var(--light-border); }
-    .problem-head { margin-bottom: 60px; }
-    .problem-grid {
-      display: grid; grid-template-columns: repeat(3,1fr); gap: 1px;
-      background: var(--light-border); border: 1px solid var(--light-border);
-      border-radius: 16px; overflow: hidden;
-    }
-    .problem-card { background: var(--light); padding: 36px 32px; transition: background 0.2s; }
-    .problem-card:hover { background: var(--light2); }
-    .card-num {
-      font-size: 11px; font-weight: 700; letter-spacing: 1px;
-      color: var(--blue); text-transform: uppercase; margin-bottom: 16px;
-    }
-    .problem-card h3 {
-      font-size: 16px; font-weight: 600; color: var(--text-dark);
-      margin-bottom: 12px; line-height: 1.35; letter-spacing: -0.3px;
-    }
-    .problem-card p { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
-
-    /* PULLQUOTE */
-    .pullquote {
-      background: var(--dark); padding: 72px 48px;
-      border-top: 1px solid rgba(255,255,255,0.04);
-    }
-    .pullquote-inner { max-width: 720px; margin: 0 auto; text-align: center; }
-    .pullquote q {
-      font-size: clamp(22px, 3vw, 32px); font-weight: 600; letter-spacing: -0.5px;
-      line-height: 1.4; color: var(--text-white); quotes: none;
-    }
-    .pullquote q em { font-style: normal; color: var(--blue-light); }
-
-    /* BELIEFS */
-    .beliefs { background: var(--light2); border-top: 1px solid var(--light-border); }
-    .beliefs-head { margin-bottom: 56px; }
-    .beliefs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-    .belief-card {
-      background: var(--light); border: 1px solid var(--light-border);
-      border-radius: 14px; padding: 32px 36px; transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .belief-card:hover { border-color: #c7d9f9; box-shadow: 0 4px 20px rgba(36,99,235,0.06); }
-    .belief-icon {
-      width: 36px; height: 36px; border-radius: 8px;
-      background: var(--blue-pale); border: 1px solid #d0e3fd;
-      display: flex; align-items: center; justify-content: center; margin-bottom: 18px;
-    }
-    .belief-icon svg { width: 18px; height: 18px; color: var(--blue); }
-    .belief-card h3 { font-size: 15px; font-weight: 600; color: var(--text-dark); margin-bottom: 10px; letter-spacing: -0.2px; }
-    .belief-card p { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
-
-    /* APPROACH */
-    .approach { background: var(--light); border-top: 1px solid var(--light-border); }
-    .approach-head { margin-bottom: 56px; }
-    .approach-rows { border: 1px solid var(--light-border); border-radius: 16px; overflow: hidden; }
-    .approach-row {
-      display: flex; gap: 32px; align-items: flex-start;
-      padding: 32px 40px; border-bottom: 1px solid var(--light-border); transition: background 0.15s;
-    }
-    .approach-row:last-child { border-bottom: none; }
-    .approach-row:hover { background: var(--light2); }
-    .approach-num {
-      font-size: 11px; font-weight: 700; letter-spacing: 1px;
-      color: var(--blue); text-transform: uppercase; padding-top: 3px; min-width: 28px; flex-shrink: 0;
-    }
-    .approach-text h3 { font-size: 16px; font-weight: 600; color: var(--text-dark); margin-bottom: 6px; letter-spacing: -0.2px; }
-    .approach-text p { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
-
-    /* PROOF */
-    .proof { background: var(--light2); border-top: 1px solid var(--light-border); padding: 72px 48px; }
-    .proof-inner { max-width: 960px; margin: 0 auto; }
-    .proof-label {
-      font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
-      color: var(--text-light); text-align: center; margin-bottom: 36px;
-    }
-    .proof-logos { display: flex; align-items: center; justify-content: center; gap: 48px; flex-wrap: wrap; }
-    .proof-logo {
-      font-size: 13px; font-weight: 600; color: var(--text-mid);
-      letter-spacing: 0.5px; opacity: 0.7; display: flex; align-items: center; gap: 8px;
-    }
-    .proof-logo-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); opacity: 0.5; }
-    .proof-divider { color: var(--light-border); font-size: 20px; }
-
-    /* CONTACT */
-    .contact { background: var(--dark2); padding: 96px 48px; }
-    .contact-inner { max-width: 640px; margin: 0 auto; text-align: center; }
-    .contact h2 { color: #fff; margin-bottom: 16px; }
-    .contact .section-sub { color: var(--text-white-muted); max-width: none; text-align: center; margin: 0 auto 48px; }
-    .contact-form { display: flex; gap: 12px; max-width: 480px; margin: 0 auto; }
-    .contact-form input {
-      flex: 1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
-      color: #fff; font-family: inherit; font-size: 15px;
-      padding: 14px 18px; border-radius: 10px; outline: none; transition: border-color 0.2s;
-    }
-    .contact-form input:focus { border-color: rgba(59,130,246,0.5); }
-    .contact-form input::placeholder { color: rgba(255,255,255,0.3); }
-    .btn-primary {
+    .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-solid {
       background: var(--blue); color: #fff; border: none;
-      padding: 14px 24px; border-radius: 10px; font-size: 14px; font-weight: 600;
-      font-family: inherit; cursor: pointer; white-space: nowrap; transition: background 0.2s, transform 0.1s;
+      padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 500;
+      font-family: inherit; cursor: pointer; text-decoration: none; display: inline-block;
+      transition: opacity 0.15s;
     }
-    .btn-primary:hover { background: #1d52d9; transform: translateY(-1px); }
-    .contact-note { margin-top: 16px; font-size: 12px; color: rgba(255,255,255,0.25); }
-    .contact-note a { color: rgba(255,255,255,0.35); }
+    .btn-solid:hover { opacity: 0.88; }
+    .btn-ghost {
+      background: transparent; color: var(--text-mid);
+      border: 1px solid var(--border);
+      padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 500;
+      font-family: inherit; cursor: pointer; text-decoration: none; display: inline-block;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-ghost:hover { border-color: var(--text-muted); color: var(--text); }
 
-    /* FOOTER */
+    /* ── PROBLEMS ── */
+    .problems {
+      border-top: 1px solid var(--border);
+      padding: 72px 48px 80px;
+    }
+    .problems-grid {
+      max-width: 960px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 0; border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+    }
+    .problem-col {
+      padding: 36px 32px;
+      border-right: 1px solid var(--border);
+    }
+    .problem-col:last-child { border-right: none; }
+    .problem-tag {
+      font-size: 10px; font-weight: 700; letter-spacing: 1.4px;
+      text-transform: uppercase; color: var(--blue); margin-bottom: 20px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .problem-tag::before {
+      content: ''; display: inline-block; width: 5px; height: 5px;
+      border-radius: 50%; background: var(--blue); flex-shrink: 0;
+    }
+    .problem-col h3 {
+      font-size: 16px; font-weight: 600; line-height: 1.4; letter-spacing: -0.3px;
+      color: var(--text); margin-bottom: 14px;
+    }
+    .problem-col p { font-size: 14px; color: var(--text-muted); line-height: 1.75; }
+
+    /* ── BELIEVE ── */
+    .believe {
+      background: var(--light2); border-top: 1px solid var(--border);
+      padding: 80px 48px;
+    }
+    .believe-inner {
+      max-width: 960px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start;
+    }
+    .believe-left {}
+    .believe-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--text-faint); margin-bottom: 16px;
+    }
+    .believe-left h2 {
+      font-size: clamp(26px, 3.5vw, 38px); font-weight: 700;
+      letter-spacing: -1px; line-height: 1.12; margin-bottom: 40px; color: var(--text);
+    }
+    .belief-list { display: flex; flex-direction: column; gap: 0; }
+    .belief-item {
+      border-top: 1px solid var(--border); cursor: pointer;
+      transition: background 0.15s;
+    }
+    .belief-item:last-child { border-bottom: 1px solid var(--border); }
+    .belief-header {
+      display: flex; align-items: center; gap: 14px;
+      padding: 18px 0; user-select: none;
+    }
+    .belief-num {
+      font-size: 11px; font-weight: 700; color: var(--text-faint);
+      width: 20px; flex-shrink: 0; text-align: right;
+    }
+    .belief-item.active .belief-num { color: var(--blue); }
+    .belief-title {
+      font-size: 15px; font-weight: 500; color: var(--text-mid); flex: 1; line-height: 1.4;
+    }
+    .belief-item.active .belief-title { color: var(--text); font-weight: 600; }
+    .belief-body {
+      font-size: 14px; color: var(--text-muted); line-height: 1.75;
+      padding: 0 0 18px 34px; display: none;
+    }
+    .belief-item.active .belief-body { display: block; }
+    .belief-indicator {
+      width: 3px; height: 100%; background: var(--blue);
+      position: absolute; left: 0; top: 0; border-radius: 2px;
+      display: none;
+    }
+    .belief-item { position: relative; padding-left: 0; }
+    .belief-item.active .belief-indicator { display: block; }
+
+    /* right panel */
+    .believe-right {
+      background: var(--light); border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden; min-height: 360px;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      padding: 48px 40px; position: relative;
+    }
+    .believe-panel { display: none; text-align: center; width: 100%; }
+    .believe-panel.active { display: block; }
+    .believe-panel-num {
+      font-size: 72px; font-weight: 700; letter-spacing: -4px;
+      color: var(--border); line-height: 1; margin-bottom: 20px;
+    }
+    .believe-panel h3 {
+      font-size: 18px; font-weight: 600; letter-spacing: -0.3px;
+      color: var(--text); margin-bottom: 12px; line-height: 1.35;
+    }
+    .believe-panel p { font-size: 14px; color: var(--text-muted); line-height: 1.75; max-width: 280px; margin: 0 auto; }
+
+    /* ── COMPANY ── */
+    .company {
+      background: var(--dark); padding: 88px 48px;
+    }
+    .company-inner {
+      max-width: 800px; margin: 0 auto;
+      display: grid; grid-template-columns: auto 1fr; gap: 64px; align-items: center;
+    }
+    .company-logo-wrap {
+      display: flex; flex-direction: column; align-items: center; gap: 20px; flex-shrink: 0;
+    }
+    .company-logo-wrap img {
+      width: 96px; height: 96px; border-radius: 22px;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 12px 40px rgba(0,0,0,0.4);
+    }
+    .company-accel {
+      display: flex; flex-direction: column; gap: 8px; align-items: center;
+    }
+    .accel-chip {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.55); font-size: 11px; font-weight: 500;
+      padding: 5px 12px; border-radius: 100px; white-space: nowrap;
+    }
+    .company-text {}
+    .company-text h2 {
+      font-size: clamp(22px, 3vw, 32px); font-weight: 600; letter-spacing: -0.8px;
+      line-height: 1.35; color: var(--on-dark); margin-bottom: 20px;
+    }
+    .company-text p { font-size: 15px; color: var(--on-dark-muted); line-height: 1.7; margin-bottom: 8px; }
+
+    /* ── CONTACT ── */
+    .contact {
+      padding: 88px 48px; position: relative; overflow: hidden;
+      border-top: 1px solid var(--border);
+    }
+    .contact-bg {
+      position: absolute; right: -80px; top: 50%; transform: translateY(-50%);
+      opacity: 0.04; pointer-events: none;
+    }
+    .contact-bg img { width: 480px; height: auto; }
+    .contact-inner { max-width: 560px; position: relative; z-index: 1; }
+    .contact-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--text-faint); margin-bottom: 20px;
+    }
+    .contact-inner h2 {
+      font-size: clamp(24px, 3.5vw, 38px); font-weight: 700;
+      letter-spacing: -1px; line-height: 1.2; color: var(--text); margin-bottom: 24px;
+    }
+    .contact-email {
+      font-size: 18px; color: var(--blue); font-weight: 500;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+      transition: opacity 0.15s;
+    }
+    .contact-email:hover { opacity: 0.75; }
+
+    /* ── FOOTER ── */
     footer {
-      background: var(--dark); padding: 32px 48px;
-      border-top: 1px solid rgba(255,255,255,0.05);
+      background: var(--dark); padding: 28px 48px;
       display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
     }
-    footer img { height: 28px; border-radius: 6px; opacity: 0.6; }
-    footer p { font-size: 13px; color: rgba(255,255,255,0.25); }
-    footer a { color: rgba(255,255,255,0.3); text-decoration: none; font-size: 13px; transition: color 0.2s; }
-    footer a:hover { color: rgba(255,255,255,0.6); }
+    .footer-left { font-size: 13px; color: rgba(255,255,255,0.25); max-width: 320px; line-height: 1.5; }
+    .footer-nav { display: flex; gap: 24px; }
+    .footer-nav a {
+      font-size: 13px; color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.15s;
+    }
+    .footer-nav a:hover { color: rgba(255,255,255,0.75); }
+    .footer-copy { font-size: 12px; color: rgba(255,255,255,0.2); }
 
+    /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
-      nav { padding: 0 24px; }
-      .nav-links { gap: 20px; }
-      .nav-links a:not(.nav-contact) { display: none; }
-      .section { padding: 72px 24px; }
-      .hero { padding: 96px 24px 72px; }
-      .pullquote { padding: 56px 24px; }
-      .proof { padding: 56px 24px; }
-      .contact { padding: 72px 24px; }
-      footer { padding: 28px 24px; }
-      .problem-grid { grid-template-columns: 1fr; gap: 0; }
-      .beliefs-grid { grid-template-columns: 1fr; }
-      .approach-row { padding: 24px; }
-      .contact-form { flex-direction: column; }
-      .proof-logos { gap: 24px; }
+      nav { padding: 0 20px; }
+      .nav-right a:not(.nav-btn) { display: none; }
+      .hero { padding: 64px 24px 56px; }
+      .problems { padding: 56px 24px; }
+      .problems-grid { grid-template-columns: 1fr; }
+      .problem-col { border-right: none; border-bottom: 1px solid var(--border); }
+      .problem-col:last-child { border-bottom: none; }
+      .believe { padding: 64px 24px; }
+      .believe-inner { grid-template-columns: 1fr; gap: 32px; }
+      .believe-right { min-height: 240px; }
+      .company { padding: 64px 24px; }
+      .company-inner { grid-template-columns: 1fr; gap: 40px; }
+      .company-logo-wrap { flex-direction: row; justify-content: flex-start; }
+      .contact { padding: 64px 24px; }
+      .contact-bg { display: none; }
+      footer { padding: 24px 20px; }
     }
   </style>
 </head>
 <body>
 
+<!-- NAV -->
 <nav>
-  <a href="index.html" class="nav-logo"><img src="assets/tika-logo.png" alt="Tika" /></a>
-  <div class="nav-links">
-    <a href="#problem">The Problem</a>
-    <a href="#approach">Our Approach</a>
+  <div class="nav-left">
+    <img src="assets/tika-logo.png" alt="Tika" />
+    <span>Tika</span>
+  </div>
+  <div class="nav-right">
     <a href="about.html">About</a>
-    <a href="join.html">Join Us</a>
-    <a href="mailto:info@tika.io" class="nav-contact">info@tika.io</a>
+    <a href="join.html">Join</a>
+    <a href="#contact" class="nav-btn">Learn more</a>
   </div>
 </nav>
 
-<section class="hero">
-  <div class="hero-inner">
-    <div class="hero-logo"><img src="assets/tika-logo.png" alt="Tika" /></div>
-    <div class="badge"><span class="badge-dot"></span>Stealth &middot; Enterprise Data Security</div>
-    <h1>Data free to move.<br><em>Security that follows.</em></h1>
-    <p class="hero-sub">
-      Tika is the data control layer for the modern enterprise. Policy travels with your data —
-      across people, devices, AI systems, and organizational boundaries.
-    </p>
-  </div>
-</section>
-
-<section class="section problem" id="problem">
-  <div class="container">
-    <div class="problem-head">
-      <div class="label label-blue">The Problem</div>
-      <h2>Security built for a world<br>that no longer exists.</h2>
-      <p class="section-sub">
-        The perimeter is gone. Data moves constantly — across employees, contractors,
-        partners, and AI systems. The tools enterprises rely on weren't built for any of it.
-      </p>
-    </div>
-    <div class="problem-grid">
-      <div class="problem-card">
-        <div class="card-num">01</div>
-        <h3>Control breaks at every boundary</h3>
-        <p>Once a file leaves your network — to a partner, a personal device, or an AI tool — enforcement becomes theoretical. Revocation rarely works. Visibility disappears entirely.</p>
-      </div>
-      <div class="problem-card">
-        <div class="card-num">02</div>
-        <h3>AI is moving data faster than governance</h3>
-        <p>Blanket blocking drives shadow AI. Doing nothing bleeds data. 57% of employees already input sensitive information into public AI tools, outside any policy or oversight.</p>
-      </div>
-      <div class="problem-card">
-        <div class="card-num">03</div>
-        <h3>Security and velocity in constant conflict</h3>
-        <p>The tighter the controls, the slower the work. Teams route around security to get things done. The result is a deteriorating relationship between security and the business it exists to protect.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="pullquote">
-  <div class="pullquote-inner">
-    <q>Traditional DLP <em>watches the door.</em><br>Tika makes the data <em>useless if it walks out.</em></q>
+<!-- HERO -->
+<div class="hero">
+  <p class="hero-label">The Problem</p>
+  <h1>Enterprise Data Security Today</h1>
+  <p class="hero-sub">Security teams stay on a treadmill plugging holes that users route around.</p>
+  <div class="hero-actions">
+    <a href="#believe" class="btn-solid">Learn more</a>
+    <a href="join.html" class="btn-ghost">We're hiring</a>
   </div>
 </div>
 
-<section class="section beliefs" id="beliefs">
-  <div class="container">
-    <div class="beliefs-head">
-      <div class="label label-blue">What We Believe</div>
-      <h2>Security shouldn't be a tax<br>on getting work done.</h2>
-      <p class="section-sub">
-        The best security is invisible to people who follow the rules,
-        and impossible to bypass for everyone else.
-      </p>
+<!-- PROBLEMS -->
+<section class="problems" id="problem">
+  <div class="problems-grid">
+    <div class="problem-col">
+      <div class="problem-tag">The Perimeter Assumption</div>
+      <h3>Security depends on confining data within a perimeter.</h3>
+      <p>But data doesn't stay put. Partners, contractors, and customers all need access. The business demands collaboration across the very boundaries that security was designed to enforce.</p>
     </div>
-    <div class="beliefs-grid">
-      <div class="belief-card">
-        <div class="belief-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <div class="problem-col">
+      <div class="problem-tag">The Classification Trap</div>
+      <h3>Data restriction only works if every label is accurate.</h3>
+      <p>Every policy requires accurate labels. Every missed label is a missed threat or a false positive that trains users to ignore alerts. Perfect classification at scale doesn't exist.</p>
+    </div>
+    <div class="problem-col">
+      <div class="problem-tag">The Trust Problem</div>
+      <h3>Security posture depends on users doing the right thing.</h3>
+      <p>They won't. They have jobs to do. They'll find workarounds — email, consumer file sharing, ChatGPT. Security that depends on user compliance isn't security.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT WE BELIEVE -->
+<section class="believe" id="believe">
+  <div class="believe-inner">
+    <div class="believe-left">
+      <p class="believe-label">Our Approach</p>
+      <h2>What we believe</h2>
+      <div class="belief-list">
+
+        <div class="belief-item active" data-panel="0">
+          <span class="belief-indicator"></span>
+          <div class="belief-header">
+            <span class="belief-num">1</span>
+            <span class="belief-title">Data lives everywhere. The perimeter is gone.</span>
+          </div>
+          <div class="belief-body">
+            We live in a collaborative world. Every employee, partner, contractor, and AI system needs access to sensitive data. Security that never moves with the data will never protect it — no matter how high you build the walls.
+          </div>
         </div>
-        <h3>Value in the right hands</h3>
-        <p>Data delivers outcomes when it reaches the people and AI systems that can act on it. Locking everything down isn't security — it's friction that costs the business.</p>
+
+        <div class="belief-item" data-panel="1">
+          <span class="belief-indicator"></span>
+          <div class="belief-header">
+            <span class="belief-num">2</span>
+            <span class="belief-title">Classification helps. It's not enough.</span>
+          </div>
+          <div class="belief-body">
+            If you can't control what happens to data after it's labeled, the label is meaningless. Policy enforcement has to travel with the data itself — not merely tag it and hope the recipient honors the tag.
+          </div>
+        </div>
+
+        <div class="belief-item" data-panel="2">
+          <span class="belief-indicator"></span>
+          <div class="belief-header">
+            <span class="belief-num">3</span>
+            <span class="belief-title">Security must be invisible.</span>
+          </div>
+          <div class="belief-body">
+            The best security is what happens in the background, without disrupting the way people work. It doesn't require training, behavior change, or perfect compliance. It enforces itself.
+          </div>
+        </div>
+
       </div>
-      <div class="belief-card">
-        <div class="belief-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        </div>
-        <h3>Frictionless by default</h3>
-        <p>Sharing shouldn't require heroics, training, or perfect behavior. Security that depends on employees doing the right thing every time will always fail.</p>
+    </div>
+
+    <div class="believe-right">
+      <div class="believe-panel active" data-panel="0">
+        <div class="believe-panel-num">01</div>
+        <h3>Data lives everywhere.<br>The perimeter is gone.</h3>
+        <p>The boundary was always a fiction. Today it's an expensive one.</p>
       </div>
-      <div class="belief-card">
-        <div class="belief-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        </div>
-        <h3>Security travels with the work</h3>
-        <p>Protection holds as data moves across teams, companies, devices, and tools. The boundary is not the last line of defense — the data itself is.</p>
+      <div class="believe-panel" data-panel="1">
+        <div class="believe-panel-num">02</div>
+        <h3>Classification helps.<br>It's not enough.</h3>
+        <p>A label without enforcement is just documentation of the breach you haven't noticed yet.</p>
       </div>
-      <div class="belief-card">
-        <div class="belief-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-        </div>
-        <h3>Trust you can prove</h3>
-        <p>Clear boundaries and auditable decisions, so control is credible — not assumed. Compliance is built into how data moves, not generated after the fact.</p>
+      <div class="believe-panel" data-panel="2">
+        <div class="believe-panel-num">03</div>
+        <h3>Security must<br>be invisible.</h3>
+        <p>If security requires people to act differently, it will be routed around. Every time.</p>
       </div>
     </div>
   </div>
 </section>
 
-<section class="section approach" id="approach">
-  <div class="container">
-    <div class="approach-head">
-      <div class="label label-blue">Our Approach</div>
-      <h2>A control layer that travels<br>with the data.</h2>
-      <p class="section-sub">
-        Tika enforces access policy at the data layer — not at the network edge. Control holds
-        wherever data goes, on any device, in any app, for any actor including AI.
-      </p>
+<!-- COMPANY -->
+<section class="company" id="approach">
+  <div class="company-inner">
+    <div class="company-logo-wrap">
+      <img src="assets/tika-logo.png" alt="Tika" />
+      <div class="company-accel">
+        <span class="accel-chip">CrowdStrike Accelerator</span>
+        <span class="accel-chip">AWS Activate</span>
+        <span class="accel-chip">NVIDIA Inception</span>
+      </div>
     </div>
-    <div class="approach-rows">
-      <div class="approach-row">
-        <div class="approach-num">01</div>
-        <div class="approach-text">
-          <h3>Control follows the data, not the perimeter</h3>
-          <p>Policy stays enforceable even when a file leaves your network, your approved apps, or your organization entirely. The boundary is no longer the last line of defense.</p>
-        </div>
-      </div>
-      <div class="approach-row">
-        <div class="approach-num">02</div>
-        <div class="approach-text">
-          <h3>Centralized policy, decentralized enforcement</h3>
-          <p>Define access rules once. Enforce them everywhere — in the flow of work, without asking people to change how they operate or install new tools.</p>
-        </div>
-      </div>
-      <div class="approach-row">
-        <div class="approach-num">03</div>
-        <div class="approach-text">
-          <h3>AI governed like humans — not blocked or ignored</h3>
-          <p>AI agents are treated as first-class actors under the same access control model as people. Granular, auditable, policy-governed — not a binary allow/block.</p>
-        </div>
-      </div>
-      <div class="approach-row">
-        <div class="approach-num">04</div>
-        <div class="approach-text">
-          <h3>Revocation that actually works</h3>
-          <p>Access can be stopped after the fact. Once revoked, the next access is denied — even for data already across a boundary, on a device you don't own.</p>
-        </div>
-      </div>
+    <div class="company-text">
+      <h2>We are building technology where data protects itself — wherever it travels and whoever accesses it.</h2>
+      <p>Selected for the 2025 CrowdStrike, AWS &amp; NVIDIA Cybersecurity Accelerators.</p>
+      <p>70 companies chosen from hundreds of applicants.</p>
     </div>
   </div>
 </section>
 
-<div class="proof">
-  <div class="proof-inner">
-    <div class="proof-label">Accelerated &amp; Backed By</div>
-    <div class="proof-logos">
-      <span class="proof-logo"><span class="proof-logo-dot"></span>CrowdStrike Accelerator</span>
-      <span class="proof-divider">·</span>
-      <span class="proof-logo"><span class="proof-logo-dot"></span>AWS Activate</span>
-      <span class="proof-divider">·</span>
-      <span class="proof-logo"><span class="proof-logo-dot"></span>NVIDIA Inception</span>
-    </div>
-  </div>
-</div>
-
+<!-- CONTACT -->
 <section class="contact" id="contact">
+  <div class="contact-bg">
+    <img src="assets/tika-logo.png" alt="" aria-hidden="true" />
+  </div>
   <div class="contact-inner">
-    <div class="label label-white">Get in Touch</div>
-    <h2>We're preparing for<br>a limited beta.</h2>
-    <p class="section-sub">
-      If you run security for an enterprise that moves sensitive data across boundaries —
-      we want to talk.
-    </p>
-    <form class="contact-form" onsubmit="handleSubmit(event)">
-      <input type="email" placeholder="your@company.com" required />
-      <button type="submit" class="btn-primary">Request Access</button>
-    </form>
-    <p class="contact-note">Or reach us directly: <a href="mailto:info@tika.io">info@tika.io</a></p>
+    <p class="contact-label">Get in touch</p>
+    <h2>If you haven't found a satisfying answer to the problems above and want to know more</h2>
+    <a href="mailto:info@tika.io" class="contact-email">
+      write to us: info@tika.io →
+    </a>
   </div>
 </section>
 
+<!-- FOOTER -->
 <footer>
-  <img src="assets/tika-logo.png" alt="Tika" />
-  <p>© 2025 Tika Security, Inc. Building in stealth.</p>
-  <div style="display:flex;gap:20px">
-    <a href="about.html">About</a>
-    <a href="join.html">Careers</a>
-    <a href="mailto:info@tika.io">info@tika.io</a>
-  </div>
+  <p class="footer-left">Sensitive data accessible to anyone unauthorized is a problem that doesn't go away on its own.</p>
+  <nav class="footer-nav">
+    <a href="#problem">The Problem</a>
+    <a href="#approach">Our Approach</a>
+    <a href="join.html">Career</a>
+  </nav>
+  <p class="footer-copy">© 2026 Tika Inc. All rights reserved.</p>
 </footer>
 
 <script>
-function handleSubmit(e) {
-  e.preventDefault();
-  const btn = e.target.querySelector('button');
-  const input = e.target.querySelector('input');
-  btn.textContent = "Thanks — we'll be in touch.";
-  btn.disabled = true; input.disabled = true;
-  setTimeout(() => window.location.href = 'mailto:info@tika.io?subject=Early Access Request', 1000);
-}
+  // Belief accordion
+  const items = document.querySelectorAll('.belief-item');
+  const panels = document.querySelectorAll('.believe-panel');
+
+  items.forEach(item => {
+    item.addEventListener('click', () => {
+      const idx = item.dataset.panel;
+      items.forEach(i => i.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      item.classList.add('active');
+      document.querySelector(`.believe-panel[data-panel="${idx}"]`).classList.add('active');
+    });
+  });
 </script>
+
 </body>
 </html>
