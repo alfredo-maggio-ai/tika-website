@@ -88,15 +88,17 @@
     .investor-card {
       background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
       border-radius: 12px; padding: 40px 36px;
-      display: flex; align-items: center; justify-content: center;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px;
       min-height: 140px; transition: background 0.2s;
     }
     .investor-card:hover { background: rgba(255,255,255,0.07); }
+    .investor-logo { max-width: 180px; max-height: 56px; object-fit: contain; display: block; }
     .investor-name {
       font-size: 22px; font-weight: 700; letter-spacing: -0.5px;
       color: rgba(255,255,255,0.85); text-align: center;
     }
     .investor-name span { display: block; font-size: 13px; font-weight: 400; color: var(--on-dark-muted); margin-top: 4px; letter-spacing: 0; }
+    .investor-desc { font-size: 13px; color: var(--on-dark-muted); text-align: center; }
 
     /* ADVISORS */
     .advisors { padding: 80px 48px; border-top: 1px solid var(--border); }
@@ -201,10 +203,8 @@ function checkPass(e){e.preventDefault();var v=document.getElementById('gate-inp
     <h2 class="section-heading light">Investors</h2>
     <div class="investors-grid">
       <div class="investor-card">
-        <div class="investor-name">
-          SYNC Ventures
-          <span>Early-stage security & infrastructure</span>
-        </div>
+        <img src="assets/sync-vc-logo.jpg" alt="SYNC Ventures" class="investor-logo" />
+        <span class="investor-desc">Early-stage security & infrastructure</span>
       </div>
       <div class="investor-card">
         <div class="investor-name">
